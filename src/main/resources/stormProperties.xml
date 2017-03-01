@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       "
+	default-lazy-init="true">
+	
+	<!-- <context:property-placeholder location="classpath:stormLogCfg.properties" /> -->
+	
+	<bean class="com.ailk.eaap.o2p.common.spring.config.O2pPropertyPlaceholderConfigurer">
+		<property name="remoteOverride" value="true"></property>
+		<property name="cacheHolder" ref="cacheHolder"></property>
+	</bean>
+	
+	<bean id="cacheHolder" class="com.ailk.eaap.o2p.common.spring.config.ZKCfgCacheHolder">
+		<property name="ignoreResourceNotFound" value="true"></property>
+	</bean>
+	
+	
+	<!-- 注册配置文件属性 -->
+	<bean id="confProps" class="com.asiainfo.integration.o2p.log.common.util.Properties">
+		<property name="activeMqURL" value="${activemq.consumer.brokerURL}"/>
+		<property name="activeMqQueue" value="${activemq.consumer.queueDestination}"/>
+		<property name="activeMqUsename" value="${activemq.consumer.userName}"/>
+		<property name="activeMqPassword" value="${activemq.consumer.password}"/>
+		<property name="isHbaseType" value="${log.isHbaseType}"></property>
+		<property name="workNum" value="${storm.worknum}"></property>
+		<property name="spoutThreadNum" value="${storm.spout.thread.num}"></property>
+		<property name="storeBoltThreadNum" value="${storm.store.bolt.thread.num}"></property>
+		<property name="statSplitThreadNum" value="${storm.stat.split.thread.num}"></property>
+		<property name="statGroupThreadNum" value="${storm.stat.group.thread.num}"></property>
+		<property name="batchNum" value="${rmdb.log.batch.commit.num}"></property>
+		<property name="ifFormatUTC" value="${log.timestamp.format.utc}"></property>
+		<property name="internalTime" value="${log.internal.stat.time.second}"></property>
+		<property name="spoutSleepTime" value="${log.spout.sleep.time.second}"></property>
+		<property name="statGroupStoreThreadNum" value="${storm.stat.store.thread.num}"></property>
+		<property name="exceptionDestination" value="${dealException.activemq.exceptionDestination}"></property>
+	</bean>
+	
+</beans>

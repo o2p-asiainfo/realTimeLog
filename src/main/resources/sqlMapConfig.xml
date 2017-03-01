@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<settings>
+		 <setting name="jdbcTypeForNull" value="NULL"/>  
+	</settings>
+
+    <mappers>
+         <mapper resource="mapper/contractInteraction-sqlmap.xml"/>
+         <mapper resource="mapper/endpointInteraction-sqlmap.xml"/>
+         <mapper resource="mapper/oriLogClob-sqlmap.xml"/>
+         <mapper resource="mapper/ctgLogs-sqlmap.xml"/>
+         <mapper resource="mapper/exceptionLogs-sqlmap.xml"/>
+         <!-- statistics section -->
+         <mapper resource="mapper/regOther-sqlmap.xml"/>
+         <mapper resource="mapper/regSec-sqlmap.xml"/>
+         <mapper resource="mapper/useOther-sqlmap.xml"/>
+         <mapper resource="mapper/useSec-sqlmap.xml"/>
+   
+    </mappers>
+</configuration>

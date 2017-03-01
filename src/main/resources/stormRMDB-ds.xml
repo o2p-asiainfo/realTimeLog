@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:hdp="http://www.springframework.org/schema/hadoop" 
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+       http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd
+       "
+	default-lazy-init="true">
+	
+	
+	<context:annotation-config />
+	<context:component-scan base-package="com.*" />
+	<bean class="com.asiainfo.integration.o2p.log.common.util.SpringContext"></bean>
+	
+	<!-- <context:property-placeholder location="classpath:stormLogCfg.properties" /> -->
+	<bean class="com.ailk.eaap.o2p.common.spring.config.O2pPropertyPlaceholderConfigurer">
+		<property name="remoteOverride" value="true"></property>
+		<property name="cacheHolder" ref="cacheHolder"></property>
+	</bean>
+	
+	<bean id="cacheHolder" class="com.ailk.eaap.o2p.common.spring.config.ZKCfgCacheHolder">
+		<property name="ignoreResourceNotFound" value="true"></property>
+	</bean>
+	
+	  <bean id="statisticsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+			<property name="driverClass" value="${statistics.stormRMDB.jdbcDriver}"/>
+			<property name="jdbcUrl" value="${statistics.stormRMDB.url}"/>
+			<property name="user" value="${statistics.stormRMDB.user}"/>
+			<property name="password" value="${statistics.stormRMDB.password}"/>
+			<property name="maxPoolSize" value="${statistics.stormRMDB.maxIdle}"/>
+			<property name="minPoolSize" value="${statistics.stormRMDB.minIdle}"/>
+			<property name="initialPoolSize" value="${statistics.stormRMDB.initialSize}"/>
+			<property name="acquireRetryDelay" value="${statistics.stormRMDB.maxWait}"/>
+			<property name="breakAfterAcquireFailure" value="${statistics.stormRMDB.breakAfterAcquireFailure}"/>
+			<property name="testConnectionOnCheckout" value="${statistics.stormRMDB.testConnectionOnCheckout}"/>
+			<property name="testConnectionOnCheckin" value="${statistics.stormRMDB.testConnectionOnCheckin}"/>
+			<property name="idleConnectionTestPeriod" value="${statistics.stormRMDB.idleConnectionTestPeriod}"/>
+			<property name="acquireRetryAttempts" value="${statistics.stormRMDB.acquireRetryAttempts}"/>
+	    </bean> 
+	
+	
+		<bean id="databaseIdProvider" class="com.asiainfo.integration.o2p.log.common.datasource.VendorDatabaseIdProviderEx">
+	    	<property name="properties" ref="vendorProperties"/>
+	  	</bean>
+	  	<bean id="sessionFactory4Statistics" class="org.mybatis.spring.SqlSessionFactoryBean">
+	        <property name="configLocation" value="classpath:sqlMapConfig.xml"></property>
+	        <property name="dataSource" ref="statisticsDataSource"></property>
+	        <property name="databaseIdProvider" ref="databaseIdProvider" />
+	    </bean>
+	  	<bean id="vendorProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+	    	<property name="properties">
+	      		<props>
+	        		<prop key="MySQL">mysql</prop>
+	        		<prop key="Oracle">oracle</prop>
+	      		</props>
+	    	</property>
+	  	</bean>
+	  	
+	  	<bean id="statisticsStoreDao" class="com.asiainfo.integration.o2p.log.dao.impl.StatisticsStoreDAOImpl">
+			<property name="sqlSessionFactory" ref="sessionFactory4Statistics"></property>
+		</bean>
+		<bean id="messageLogTimeZoneService" class="com.asiainfo.integration.o2p.log.service.impl.MessageLogTimeZoneServiceImpl">
+		</bean>
+		
+		
+		
+	<beans profile="rmdb" >
+		<import resource="spring/eaap-op2-common-spring.xml" />
+		
+		<bean id="multiDataSourceRoute" class="com.ailk.eaap.o2p.common.jdbc.datasource.MultiDataSourceRouteImpl"></bean>
+	
+		<bean id="multiDataSource" class="com.asiainfo.integration.o2p.log.common.datasource.DynamicDataSource" >
+			<property name="multiDataSourceRoute">
+				<ref bean="multiDataSourceRoute" />
+			</property>
+		</bean>
+		
+		<bean id="exceptionTaskSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+			<property name="driverClass" value="${log.stormRMDB.jdbcDriver}"/>
+			<property name="jdbcUrl" value="${log.stormRMDB.url}"/>
+			<property name="user" value="${log.stormRMDB.user}"/>
+			<property name="password" value="${log.stormRMDB.password}"/>
+			<property name="maxPoolSize" value="${log.stormRMDB.maxIdle}"/>
+			<property name="minPoolSize" value="${log.stormRMDB.minIdle}"/>
+			<property name="initialPoolSize" value="${log.stormRMDB.initialSize}"/>
+			<property name="acquireRetryDelay" value="${log.stormRMDB.maxWait}"/>
+			<property name="breakAfterAcquireFailure" value="${log.stormRMDB.breakAfterAcquireFailure}"/>
+			<property name="testConnectionOnCheckout" value="${log.stormRMDB.testConnectionOnCheckout}"/>
+			<property name="testConnectionOnCheckin" value="${log.stormRMDB.testConnectionOnCheckin}"/>
+			<property name="idleConnectionTestPeriod" value="${log.stormRMDB.idleConnectionTestPeriod}"/>
+			<property name="acquireRetryAttempts" value="${log.stormRMDB.acquireRetryAttempts}"/>
+	    </bean> 
+	    
+	    
+	    
+	    <bean id="exceptionTaskSourceFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="logdataSource" />
+			<property name="mapperLocations">
+				<list>
+					<value>classpath:mapper/exceptionDealInfo-sqlmap.xml</value>
+				</list>
+			</property>
+			<property name="databaseIdProvider" ref="databaseIdProvider"></property>
+		</bean>
+	    
+	    <bean id="exceptionTaskDao" class="com.asiainfo.integration.o2p.log.dao.impl.ExceptionTaskDaoImpl">
+			<property name="sqlSessionTemplate" ref="sqlSessionTemplate"/>
+		</bean>
+		
+		
+		
+		<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
+			<constructor-arg index="0" ref="exceptionTaskDao" />
+		</bean>
+	    
+	    <bean id="sessionFactory4Log" class="org.mybatis.spring.SqlSessionFactoryBean" abstract="false" scope="singleton" lazy-init="default" autowire="default">
+	        <property name="configLocation" value="classpath:sqlMapConfig.xml"></property>
+	        <property name="dataSource" ref="multiDataSource"></property>
+	        <property name="databaseIdProvider" ref="databaseIdProvider" />
+	    </bean>
+	    
+	    
+	    <!-- <bean id="sqlSession"  class="org.mybatis.spring.SqlSessionTemplate"> 
+	     	<constructor-arg index="0" ref="sqlSessionFactory" /> 
+	 	</bean> -->
+		
+		<bean id="logStoreDao" class="com.asiainfo.integration.o2p.log.dao.impl.LogStoreDaoImpl">
+			<property name="sqlSessionFactory" ref="sessionFactory4Log"></property>
+		</bean>
+		
+		<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    		<property name="dataSource" ref="multiDataSource" />
+		</bean>
+		<!-- enable transaction annotation support -->
+		<tx:annotation-driven transaction-manager="txManager" />
+		
+	</beans>
+
+
+	<!-- Hbase -->
+	<beans profile="nosql">
+		
+		<bean id="configuration" class="org.springframework.data.hadoop.hbase.HbaseConfigurationFactoryBean">
+			<property name="zkPort" value="${HB.ZK.port}"></property>
+			<property name="zkQuorum" value="${HB.zkQuorum}"></property>
+		</bean>
+		<bean id="logStoreDao" class="com.asiainfo.integration.o2p.log.dao.impl.LogStoreHbaseDaoImpl">
+			<property name="solrService" ref="solrOpServer"></property>
+		</bean>
+		<bean id="messageLogTimeZoneService" class="com.asiainfo.integration.o2p.log.service.impl.MessageLogTimeZoneServiceImpl">
+		</bean>
+		
+		
+		<bean id="solrServer" class="com.asiainfo.integration.o2p.log.common.solr.SolrServer">
+			<property name="solrServerUrl" value="${log.hbase.solr.url}"></property>
+			<property name="soTimeout" value="${log.hbase.solr.soTimeout}"></property>
+			<property name="connectionTimeout" value="${log.hbase.solr.connectionTimeout}"></property>
+			<property name="defaultMaxConnectionsPerHost" value="${log.hbase.solr.maxConnectionPerHost}"></property>
+			<property name="maxTotalConnections" value="${log.hbase.solr.maxTotalConnections}"></property>
+			<property name="followRedirects" value="false"></property>
+			<property name="allowCompression" value="true"></property>
+			<property name="maxRetries" value="5"></property>
+		</bean>
+	
+		<bean id="solrDao" class="com.asiainfo.integration.o2p.log.solr.dao.SolrDao">
+			<property name="solrServer" ref="solrServer"></property>
+		</bean>
+	
+		<bean id="solrOpServer" class="com.asiainfo.integration.o2p.log.solr.service.impl.SolrOpServerImpl">
+			<property name="solrDao" ref="solrDao"></property>
+		</bean>
+		
+	</beans>
+	
+</beans>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+
+<mapper namespace="mapper.statistics.useOther">
+	
+	<cache-ref namespace="mapper.statistics.useOther"/>
+	<cache 
+		eviction="LRU"    
+		flushInterval="60000"
+        size="512"
+     	readOnly="true"
+    />	
+	
+		<!-- 按秒插入日志统计表-->
+	<insert id="insertUseOther" parameterType="com.ailk.eaap.op2.bo.UseStatCntRecent" >
+		insert into use_stat_cnt_recent
+		  (
+		 <!--  <if test="_databaseId=='oracle'">transscr_id, </if> -->
+		  transscr_id,
+		  date_tran_id, date_type, biz_code, biz_intf_code, contract_version, sys_code,
+		   total_trans, total_biz_err, total_sys_err, total_no_grant, qos, count_time,
+		   tenant_id)
+		values
+		  (
+		  <!-- <if test="_databaseId=='oracle'">
+		  #{dataSourceKey},
+		  </if> -->
+		   #{dataSourceKey},
+		   #{dateTranId}, #{dateType}, #{bizCode}, #{bizIntfCode}, #{contractVersion}, #{sysCode},
+		   #{totalTrans}, #{totalBizErr}, #{totalSysErr}, #{totalNoGrant}, #{qos}, #{countTime},
+		   #{tenantId})		  	
+	</insert>
+	
+	
+	<!-- 按秒更新日志统计表-->
+	<update id="updateUseOther" parameterType="com.ailk.eaap.op2.bo.UseStatCntRecent">
+		UPDATE use_stat_cnt_recent SET total_trans = total_trans+#{totalTrans},
+		qos=(total_trans*qos+#{qos})/(total_trans+#{totalTrans}),
+		count_time=#{countTime},
+		total_biz_err=total_biz_err+#{totalBizErr},
+		total_sys_err=total_sys_err+#{totalSysErr}
+		where biz_code=#{bizCode}
+			and biz_intf_code=#{bizIntfCode}
+			and contract_version=#{contractVersion}
+			and sys_code=#{sysCode}
+			and date_tran_id=#{dateTranId}
+			and tenant_id=#{tenantId}
+	</update>
+	
+	
+</mapper>

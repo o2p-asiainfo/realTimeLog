@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+
+<mapper namespace="mapper.statistics.regSec">
+	
+	<cache-ref namespace="mapper.statistics.regSec"/>
+	<cache 
+		eviction="LRU"    
+		flushInterval="60000"
+        size="512"
+     	readOnly="true"
+    />	
+	
+	<!-- 插入CTG_LOGS对象 -->
+	<insert id="insertRegSec" parameterType="com.ailk.eaap.op2.bo.RegStatSec" >
+	  
+	  insert into reg_stat_sec${tableId}
+		  (
+		    <!-- <if test="_databaseId=='oracle'">usingtsc_id, </if> -->
+		    usingtsc_id,
+		  	date_tran_id, date_type, biz_code, intf_code, reg_ser_version, dst_code, 
+		  	total_trans, total_biz_err, total_sys_err, qos, avg_using, count_time,
+		  	tenant_id)
+		values
+		  (
+		  <!-- 	<if test="_databaseId=='oracle'">
+		  	#{dataSourceKey},
+		  	</if> -->
+		  	#{dataSourceKey},
+		  	#{dateTranId}, #{dateType}, #{bizCode}, #{intfCode}, #{regSerVersion}, #{dstCode}, 
+		  	#{totalTrans}, #{totalBizErr}, #{totalSysErr}, #{qos}, #{avgUsing}, #{countTime}
+		  	,#{tenantId})	
+	</insert>
+	
+	
+	<!-- 更新日志统计表  正常业务 -->
+	<update id="updateRegSec" parameterType="com.ailk.eaap.op2.bo.RegStatSec">
+		UPDATE reg_stat_sec${tableId} SET total_trans = total_trans+#{totalTrans} ,
+		 qos=(total_trans*qos+#{qos})/(total_trans+#{totalTrans}),
+		       avg_using = (total_trans*avg_using+#{avgUsing})/(total_trans+#{totalTrans}),
+		       count_time=#{countTime},
+		       total_biz_err=total_biz_err+#{totalBizErr},
+		       total_sys_err=total_sys_err+#{totalSysErr}
+		where biz_code=#{bizCode}
+			and intf_code=#{intfCode}
+			and reg_ser_version=#{regSerVersion}
+			and dst_code=#{dstCode}
+			and date_tran_id=#{dateTranId}
+			and tenant_id=#{tenantId}
+	</update>	
+	
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+
+<mapper namespace="mapper.ctgLogs">
+	
+	<cache-ref namespace="mapper.ctgLogs"/>
+	<cache 
+		eviction="LRU"    
+		flushInterval="60000"
+        size="512"
+     	readOnly="true"
+    />	
+	
+	<!-- 插入CTG_LOGS对象 -->
+	<insert id="insertCtgLogs" parameterType="com.ailk.eaap.op2.bo.CtgLogs" >
+	  insert into ctg_logs${tabSuffix}
+	  ( 
+	  	 <if test="_databaseId=='oracle'">LOGS_SEQ,</if>
+	  	 CREATE_DATE,
+	     CONTRACT_INTERACTION_ID,
+	     ERR_CODE,
+	     FUN_NAME,
+	     ERROR_MSG,
+	     DESCRIPTOR,
+	     STATUS,
+	   	 SRC_SYS_SIGN,
+	   	 TENANT_ID
+	  )
+	  values
+	  (
+	  	<if test="_databaseId=='oracle'">SEQ_CTG_LOGS.nextval,</if>
+	  	#{createDate},
+	    #{contractInteractionId},
+	    #{errCode},
+	    #{funName},
+	    #{errorMsg},
+	    #{descriptor},
+	    #{status},
+	    #{srcSysSign},
+	    #{tenantId}
+	  )
+	</insert>
+	
+	
+</mapper>

@@ -1,0 +1,4 @@
+create 'REG_STAT', { NAME => 'regStatInfo', COMPRESSION => 'snappy' }, {NUMREGIONS => 4, SPLITALGO => 'HexStringSplit'}
+create 'USE_STAT', { NAME => 'useStatInfo', COMPRESSION => 'none' }, {NUMREGIONS => 4, SPLITALGO => 'HexStringSplit'}
+
+create 'EVENT_CI', { NAME => 'mainInfo', COMPRESSION => 'snappy' }, { NAME => 'msgDetail', COMPRESSION => 'snappy' },{NUMREGIONS => 10, SPLITALGO => 'HexStringSplit'}

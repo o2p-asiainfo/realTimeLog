@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+
+<mapper namespace="exceptionDealInfo">
+
+	<insert id="addExceptionDealInfo" parameterType="com.ailk.eaap.op2.bo.ExceptionDealInfo">
+		insert into exception_deal_info
+		(SER_INVOKE_INS_ID,SERVICE_ID,COMPONENT_ID,MESSAGE_FLOW_ID,END_POINT_ID,MESSAGE_BO,TRY_NUM,CREATE_DATE,
+		UPDATE_DATE,EXCEPTION_CODE,
+		TRY_STATUS,EXCEPTION_STACK,SERINVOKEINS_NAME,SERVICE_NAME,COMPONENT_NAME,MESSAGEFLOW_NAME,ENDPOINT_NAME,
+		TRAN_ID,EXCEPTION_QUEUE_NAME,
+		RETRY_RESULT_DATE)
+		values
+		(#serInvokeInsId#,#serviceId#,#componentId#,#messageFlowId#,#endPointId#,#messageBoByte#,#tryNum#,#createDate#
+		#updateDate#,#exceptionCode#,#tryStatus#,#exceptionStack#,#serInvokeInsName#,#serviceName#,#componentName#,
+		#messageFlowName#,#endPointName#,#tranId#,#exceptionQueueName#,#reTryResultDate#)
+	</insert>
+
+</mapper>

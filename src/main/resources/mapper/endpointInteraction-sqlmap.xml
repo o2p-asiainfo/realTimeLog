@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+
+<mapper namespace="mapper.endpointInteraction">
+
+	 <cache-ref namespace="mapper.endpointInteraction"/>
+	<cache   eviction="LRU"    flushInterval="60000"
+            size="512"
+     readOnly="true"/>
+
+	<!-- 插入ENDPOINT_INTERACTION对象 parameterType="com.ailk.eaap.op2.bo.EndpointInteraction"-->
+	<insert id="insertEndpointInteraction"   parameterType="java.util.List">
+	<choose>
+		<when test="_databaseId=='mysql'">
+		<foreach collection="list" index="idx" item="ei" separator=",">
+			<if test="idx==0">
+				insert into endpoint_interaction${ei.tabSuffix}
+			  (
+			   	 CREATE_DATE, ENDPOINT_INTERACTION_ID,CONTRACT_INTERACTION_ID,
+				 SERVICE_ID,ENDPOINT_ID,SRC_TRAN_ID,REQ_OR_RES,QUEUE_MSG_ID,
+				 RES_QUEUE,REQ_QUEUE,DST_TRAN_ID,DST_ORG_CODE,DST_SYS_CODE,
+				 CENTER_FWD_2_DST_TIME,DST_REPLY_TIME,DESCRIPTOR,
+				 SRC_IP,ENDPOINT_SPEC,SUCCESS_NUM,FAIL_NUM,SRC_SYS_SIGN,
+				 IN_MSG,OUT_MSG
+			  ) values
+			</if>
+			(
+			 #{ei.createDate},#{ei.endpointInteractionId},#{ei.contractInteractionId},
+			 #{ei.serviceId}, #{ei.endpointId},#{ei.srcTranId},#{ei.reqOrRes},#{ei.queueMsgId},
+			 #{ei.resQueue},#{ei.reqQueue},#{ei.dstTranId},#{ei.dstOrgCode},#{ei.dstSysCode},
+			 #{ei.centerFwd2DstTime},#{ei.dstReplyTime},#{ei.descriptor},
+			 #{ei.srcIp},#{ei.endPointSpec},#{ei.successNum},#{ei.failNum},#{ei.srcSysSign},
+			 #{ei.inMsg},#{ei.outMsg}
+			)
+		</foreach>
+		</when>
+		<otherwise>
+		<foreach collection="list" index="idx" item="ei" separator="union all">
+			<if test="idx==0">
+				insert   into endpoint_interaction${ei.tabSuffix}
+			  (
+			   	 CREATE_DATE, ENDPOINT_INTERACTION_ID,CONTRACT_INTERACTION_ID,
+				 SERVICE_ID,ENDPOINT_ID,SRC_TRAN_ID,REQ_OR_RES,QUEUE_MSG_ID,
+				 RES_QUEUE,REQ_QUEUE,DST_TRAN_ID,DST_ORG_CODE,DST_SYS_CODE,
+				 CENTER_FWD_2_DST_TIME,DST_REPLY_TIME,DESCRIPTOR,
+				 SRC_IP,ENDPOINT_SPEC,SUCCESS_NUM,FAIL_NUM,SRC_SYS_SIGN,
+				 IN_MSG,OUT_MSG,PARTION_CODE
+			  ) 
+			  select A.A1,A.A2,A.A3,A.A4,A.A5,A.A6,A.A7,A.A8,A.A9 ,
+			  		 A.B1,A.B2,A.B3,A.B4,A.B5,A.B6,A.B7,A.B8,A.B9 ,
+			         A.C1,A.C2,A.C3,A.C4,A.C5,
+			  SEQ_ENDPOINTINTERACTION.nextval  FROM (
+			</if>
+			
+			select
+			 #{ei.createDate} A1,#{ei.endpointInteractionId} A2,#{ei.contractInteractionId} A3,
+			 #{ei.serviceId} A4 , #{ei.endpointId} A5,#{ei.srcTranId} A6,#{ei.reqOrRes} A7,#{ei.queueMsgId} A8,
+			 #{ei.resQueue} A9,#{ei.reqQueue} B1,#{ei.dstTranId} B2,#{ei.dstOrgCode} B3,#{ei.dstSysCode} B4,
+			 #{ei.centerFwd2DstTime} B5,#{ei.dstReplyTime} B6,#{ei.descriptor} B7,
+			 #{ei.srcIp} B8,#{ei.endPointSpec} B9,#{ei.successNum} C1 ,#{ei.failNum} C2,#{ei.srcSysSign} C3,
+			 #{ei.inMsg} C4,#{ei.outMsg} C5
+			 from dual
+			
+		</foreach>
+		 ) A
+		</otherwise>
+	</choose>
+	</insert>
+	
+</mapper>

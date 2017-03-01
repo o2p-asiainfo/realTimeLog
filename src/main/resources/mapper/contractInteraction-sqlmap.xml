@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="mapper.contractInteraction" >
+	
+  <cache-ref namespace="mapper.contractInteraction"/>
+	<cache   eviction="LRU"    flushInterval="60000"
+            size="512"
+     readOnly="true"/>
+  
+
+	<!-- 插入CONTRACT_INTERACTION对象 parameterType="com.ailk.eaap.op2.bo.ContractInteraction"-->
+	<insert id="insertContractInteraction"  parameterType="java.util.List">
+	<choose>
+		<when test="_databaseId=='mysql'">
+			<foreach collection="list" item="ci" separator="," index="idx">
+				<if test="idx==0">
+					insert into contract_interaction${ci.tabSuffix}
+					(
+						CREATE_TIME,CONTRACT_INTERACTION_ID,
+						BIZ_FUNC_CODE, BIZ_INTF_CODE,
+						CONTRACT_VERSION,REG_SER_CODE,
+						REG_SER_VERSION,SRC_TRAN_ID,
+						DST_TRAN_ID,SERVICE_LEVEL,SRC_ORG_CODE,
+						DST_ORG_CODE,SRC_SYS_CODE,DST_SYS_CODE,
+						TEST_FLAG,SRC_REQ_TIME,CENTER_REC_REQ_TIME,
+						CENTER_FWD_2_DST_TIME,DST_REC_TIME,
+						DST_REPLY_TIME,CENTER_REC_DST_TIME,CENTER_FWD_2_SRC_TIME,
+						SRC_CONFIRM_TIME,SRC_RESPONSE_TIME,RESPONSE_TYPE,
+						RESPONSE_CODE,RESPONSE_DES,
+						SRC_IP,INPUT_FILE_NUM,OUT_SUCCESS_FILE_NUM,
+						OUT_ERR_FILE_NUM,SRC_SYS_SIGN,
+						SERVICE_TYPE,TENANT_ID,QUEUE_NAME
+					) values
+				</if>
+					(
+					#{ci.createTime},#{ci.contractInteractionId},
+					#{ci.bizFuncCode},#{ci.bizIntfCode},#{ci.contractVersion},
+					#{ci.regSerCode},#{ci.regSerVersion},#{ci.srcTranId},#{ci.dstTranId},
+					#{ci.serviceLevel},#{ci.srcOrgCode},#{ci.dstOrgCode},
+					#{ci.srcSysCode},#{ci.dstSysCode},#{ci.testFlag},
+					#{ci.srcReqTime},#{ci.centerRecReqTime},
+					#{ci.centerFwd2DstTime},#{ci.dstRecTime},#{ci.dstReplyTime},
+					#{ci.centerRecDstTime},#{ci.centerFwd2SrcTime},
+					#{ci.srcConfirmTime},#{ci.srcResponseTime},#{ci.responseType},
+					#{ci.responseCode},#{ci.responseDes},
+					#{ci.srcIp},#{ci.inputFileNum},
+					#{ci.outputSuccessFileNum},#{ci.outputErrFileNum},#{ci.srcSysSign},
+					#{ci.serviceStyle},#{ci.tenantId},#{ci.queueName}
+					)
+		    </foreach>
+		</when>
+		<when test="_databaseId=='oracle'">
+			<foreach collection="list" item="ci" separator="union all" index="idx">
+				<if test="idx==0">
+					insert into contract_interaction${ci.tabSuffix}
+					(
+						CREATE_TIME,CONTRACT_INTERACTION_ID,
+						BIZ_FUNC_CODE, BIZ_INTF_CODE,
+						CONTRACT_VERSION,REG_SER_CODE,
+						REG_SER_VERSION,SRC_TRAN_ID,
+						DST_TRAN_ID,SERVICE_LEVEL,SRC_ORG_CODE,
+						DST_ORG_CODE,SRC_SYS_CODE,DST_SYS_CODE,
+						TEST_FLAG,SRC_REQ_TIME,CENTER_REC_REQ_TIME,
+						CENTER_FWD_2_DST_TIME,DST_REC_TIME,
+						DST_REPLY_TIME,CENTER_REC_DST_TIME,CENTER_FWD_2_SRC_TIME,
+						SRC_CONFIRM_TIME,SRC_RESPONSE_TIME,RESPONSE_TYPE,
+						RESPONSE_CODE,RESPONSE_DES,
+						SRC_IP,INPUT_FILE_NUM,OUT_SUCCESS_FILE_NUM,
+						OUT_ERR_FILE_NUM,SRC_SYS_SIGN,
+						SERVICE_TYPE,TENANT_ID,QUEUE_NAME
+					) 
+				</if>
+					(
+						select 
+						#{ci.createTime},#{ci.contractInteractionId},
+						#{ci.bizFuncCode},#{ci.bizIntfCode},#{ci.contractVersion},
+						#{ci.regSerCode},#{ci.regSerVersion},#{ci.srcTranId},#{ci.dstTranId},
+						#{ci.serviceLevel},#{ci.srcOrgCode},#{ci.dstOrgCode},
+						#{ci.srcSysCode},#{ci.dstSysCode},#{ci.testFlag},
+						#{ci.srcReqTime},#{ci.centerRecReqTime},
+						#{ci.centerFwd2DstTime},#{ci.dstRecTime},#{ci.dstReplyTime},
+						#{ci.centerRecDstTime},#{ci.centerFwd2SrcTime},
+						#{ci.srcConfirmTime},#{ci.srcResponseTime},#{ci.responseType},
+						#{ci.responseCode},#{ci.responseDes},
+						#{ci.srcIp},#{ci.inputFileNum},
+						#{ci.outputSuccessFileNum},#{ci.outputErrFileNum},#{ci.srcSysSign},
+						#{ci.serviceStyle},#{ci.tenantId},#{ci.queueName}
+						from dual
+					)
+		    </foreach>
+		</when>    
+		</choose>
+	</insert>
+	
+</mapper>

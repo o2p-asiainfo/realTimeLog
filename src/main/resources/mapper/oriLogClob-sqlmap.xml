@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+
+<mapper namespace="mapper.oriLogClob">
+	
+	<cache-ref namespace="mapper.oriLogClob"/>
+	<cache 
+		eviction="LRU"    
+		flushInterval="60000"
+        size="512"
+     	readOnly="true"
+    />
+	
+	<!-- 插入ORI_LOG_CLOB对象 parameterType="com.ailk.eaap.op2.bo.OriLogClob"-->
+	<insert id="insertOriLogClob"  parameterType="java.util.List" >
+	<choose>
+		<when test="_databaseId=='mysql'">
+			<foreach collection="list" index="idx" separator="," item="ori">
+			<if test="idx==0">
+			  insert into ori_log_clob${ori.tabSuffix}
+  				(
+  			      CREATE_TIME,ENDPOINT_INTERACTION_ID,CONTRACT_INTERACTION_ID,
+				  ENDPOINT_ID,SRC_TRAN_ID,SRC_ORG_CODE,SRC_SYS_CODE,
+				  DST_TRAN_ID,DST_ORG_CODE,DST_SYS_CODE, SRC_IP,
+				  REQ_OR_RES,MSG,FAIL_MSG,SRC_SYS_SIGN
+  				)
+  			     values
+			</if>
+			 (
+		  		#{ori.createTime},#{ori.endpointInteractionId},
+		  		#{ori.contractInteractionId},#{ori.endPointId},#{ori.srcTranId},
+		  		#{ori.srcOrgCode},#{ori.srcSysCode},#{ori.dstTranId},
+		  		#{ori.dstOrgCode}, #{ori.dstSysCode},#{ori.srcIp},#{ori.reqOrRes},
+		  		#{ori.msg},#{ori.failMsg},#{ori.srcSysSign}
+	  		 )
+			</foreach>
+		</when>
+		<otherwise>
+			<foreach collection="list" index="idx" separator="union all" item="ori">
+			<if test="idx==0">
+			  insert into ori_log_clob${ori.tabSuffix}
+  				(
+  			      ORI_ID,CREATE_TIME,OLC_ID,ENDPOINT_INTERACTION_ID,CONTRACT_INTERACTION_ID,
+				  ENDPOINT_ID,SRC_TRAN_ID,SRC_ORG_CODE,SRC_SYS_CODE,
+				  DST_TRAN_ID,DST_ORG_CODE,DST_SYS_CODE, SRC_IP,
+				  REQ_OR_RES,MSG,FAIL_MSG,SRC_SYS_SIGN
+  				) 
+  				select SEQ_LOG_ORI_ID.nextval,A.v1,A.v2,A.v3,A.v4,A.v5,A.v6,
+  				A.v7,A.v8,A.v9,A.v10,A.v11,A.v12,A.v13,A.v14,A.v15,A.v16 from (
+			</if>
+			 select  
+		  		#{ori.createTime} v1,#{ori.olcId} v2,#{ori.endpointInteractionId} v3,
+		  		#{ori.contractInteractionId} v4,#{ori.endPointId} v5,#{ori.srcTranId} v6,
+		  		#{ori.srcOrgCode} v7,#{ori.srcSysCode} v8,#{ori.dstTranId} v9,
+		  		#{ori.dstOrgCode} v10, #{ori.dstSysCode} v11,#{ori.srcIp} v12,#{ori.reqOrRes} v13,
+		  		#{ori.msg} v14,#{ori.failMsg} v15,#{ori.srcSysSign} v16
+		  		from dual
+		</foreach>
+			) A
+		</otherwise>
+	
+	</choose>
+		
+	</insert>
+	
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+
+<mapper namespace="mapper.exceptionLogs">
+
+	<cache-ref namespace="mapper.exceptionLogs"/>
+	<cache 
+		eviction="LRU"    
+		flushInterval="60000"
+        size="512"
+     	readOnly="true"
+    />	 
+	<!-- 插入EXCEPTION_LOGS对象 -->
+	<insert id="insertExceptionLogs" parameterType="com.ailk.eaap.op2.bo.ExceptionLogs">
+	  insert into exception_logs${tabSuffix}
+	  (
+	  	CREATE_TIME, 
+	  	<if test="_databaseId=='oracle'">EXCEPTION_INST_ID,</if>
+	    EXCEPTION_SPEC_ID,
+     	CONTRACT_INTERACTION_ID,
+	   	SRC_TRAN_ID,
+	    EXCEPTION_MESSAGE,
+     	CONTENT,
+     	STAFF_NBR,
+	    SRC_SYS_SIGN
+	  )
+	  values
+	  (
+	    #{createTime},
+	  	<if test="_databaseId=='oracle'">SEQ_EXCEPTION_LOGS.nextval,</if>
+	    #{exceptionSpecId},
+	    #{contractInteractionId},
+	    #{srcTranId},
+	    #{exceptionMessage},
+	    #{content},
+	    #{staffNbr},
+	    #{srcSysSign}
+	  )
+	</insert>
+	
+	
+</mapper>
